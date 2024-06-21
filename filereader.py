@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from utility import NO_OF_FEATURES
+import os
 
 class FileReader:
     def __init__(self, path):
@@ -9,19 +10,14 @@ class FileReader:
     def get_path(self):
         return self.__path_to_files
     
-    def set_path(self, newPath):
-        self.__path_to_files = newPath
+    def set_path(self, new_path):
+        self.__path_to_files = new_path
 
-    def read_file(self, filename):
+    def read_file(self, file_name):
         extension = ".csv"
 
-        if extension in filename:
-            data = pd.read_csv(os.path.join(self.__path_to_files, filename), header=0)
-            print(f"FileReader: File {filename} read successfully.")
-            print("----------------------------------------------------------")
-        else:
-            print(f"FileReader: Filename: {filename} not read. Not csv file.")
-            print("----------------------------------------------------------")
+        if extension in file_name:
+            data = pd.read_csv(os.path.join(self.__path_to_files, file_name), header=0)
     
         return data
 
@@ -38,4 +34,4 @@ class FileReader:
         outputs = dataframe.iloc[:, -1]
         return (data.iloc[6, :], outputs)'''
 
-        return (data.iloc[:50, :-1], data.iloc[:50, -1])
+        return data

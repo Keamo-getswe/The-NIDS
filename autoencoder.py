@@ -1,23 +1,20 @@
 import numpy as np
-from utility import SEED_VALUE
-from agent import Agent
+import utility
+import joblib
+import os
 
 class AutoEncoder:
-    def __init__(self, in_dimension, hidden_dimension, learn_rate=0.00001):
-        self.__input_dim = in_dimension #input and output layer size
-        self.__hidden_dim = hidden_dimension #bottleneck layer size
+    def __init__(self, in_dimension, hidden_dimension, learn_rate=0.1):
         self.__learning_rate = learn_rate
-
-        np.random.seed(616)
-        self.__encoder_weights = np.random.randn(self.__input_dim, self.__hidden_dim)
-        self.__decoder_weights = np.random.randn(self.__hidden_dim, self.__input_dim)
-        print("Autoencoder: Constructed")
+        np.random.seed(utility.TRAIN_INIT_SEED)
+        self.__encoder_weights = np.random.randn(in_dimension, hidden_dimension)
+        self.__decoder_weights = np.random.randn(hidden_dimension, in_dimension)
 
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
     def derived_sigmoid(self, x):
-        return x * (1 - x)
+        return np.exp(-x) / (1 + np.exp(-x))**2
     
     def relu(self, x):
         return np.maximum(0, x)
@@ -46,34 +43,40 @@ class AutoEncoder:
     def backward_pass(self, in_data, e_weight_sum, e_data, d_weight_sum, d_data):
         err = in_data - d_data
 
-        d_data_prime = err * self.derived_sigmoid(d_weight_sum)
-        d_weight_prime = np.dot(e_data.T, d_data_prime)
+        d_data_prime = -err * self.derived_sigmoid(d_weight_sum)
+        d_weight_prime = np.dot(e_data.reshape(-1,1), d_data_prime.reshape(1, -1))
 
         e_data_prime = np.dot(d_data_prime, self.__decoder_weights.T) * self.relu_derivative(e_weight_sum)
-        e_weight_prime = np.dot(in_data.T, e_data_prime)
+        e_weight_prime = np.dot(in_data.reshape(-1,1), e_data_prime.reshape(1,-1))
 
         self.__encoder_weights -= self.__learning_rate * e_weight_prime
         self.__decoder_weights -= self.__learning_rate * d_weight_prime
 
-    def train(self, data, epochs=100):
+    def train(self, data, epochs=utility.EPOCHS):
         #batch gradient decent
         for e in range(epochs):
-            e_weight_sum, e_data, d_weight_sum, d_data = self.forward_pass(data)
-
-            loss = self.calculate_loss(data, d_data)
+            for _, r in data.iterrows():
+                np_r = r.to_numpy()
+                e_weight_sum, e_data, d_weight_sum, d_data = self.forward_pass(np_r)
+                loss = self.calculate_loss(np_r, d_data)
+                self.backward_pass(np_r, e_weight_sum, e_data, d_weight_sum, d_data)
             print(f'Epoch {e+1}/{epochs}, Loss: {loss}')
 
-            self.backward_pass(data, e_weight_sum, e_data, d_weight_sum, d_data)
-
     def predict(self, data):
-        z1 = np.dot(data, self.__encoder_weights)
-        encoded_data = self.relu(z1)
-        z2 = np.dot(encoded_data, self.__decoder_weights)
-        decoded_data = self.sigmoid(z2)
+        _, _, _, decoded_data = self.forward_pass(data)
         return decoded_data
+    
+    def save_model(self):
+        model_params = {
+            'W1': self.__encoder_weights,
+            'W2': self.__decoder_weights
+        }
 
+        file_path = utility.AE_FILE_PATH
+        joblib.dump(model_params, file_path)
 
-agent = Agent("C:\\Users\\morob\\Documents\\Work\\Honours Project\\The NIDS\\CICIDS2017\\MachineLearningCVE")
-data = agent.preprocess()
-ae = AutoEncoder(5, 3)
-ae.train(data)
+    def load_model(self):
+        file_path = utility.AE_FILE_PATH
+        model_params = joblib.load(file_path)
+        self.__encoder_weights = model_params['W1']
+        self.__decoder_weights = model_params['W2']
