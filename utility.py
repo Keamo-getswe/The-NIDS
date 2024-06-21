@@ -3,7 +3,7 @@ DATASET_PATH = "CICIDS2017\\MachineLearningCVE"
 NO_OF_FEATURES = 79
 TEST_SIZE = 0.2
 RANDOM_STATE_SEED = 42
-TRAIN_TEST_DATA_PATH = "train_test_data.plk"
+TRAIN_TEST_DATA_PATH = "train_test_data.pkl"
 
 #AE
 TRAIN_INIT_SEED = 616
