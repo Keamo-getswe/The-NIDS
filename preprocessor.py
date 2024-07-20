@@ -38,7 +38,7 @@ class Preprocessor:
 
     def process_data(self, data):
         processed_data = self.handle_null_values(data)
-        processed_data = self.extract_features(processed_data)
+        #processed_data = self.extract_features(processed_data)
 
         #Train/test split data
         processed_train_data, processed_test_data = train_test_split(processed_data, test_size=utility.TEST_SIZE,
@@ -55,4 +55,4 @@ class Preprocessor:
         processed_train_labels = self.enumerate_labels(processed_train_labels)
         processed_test_labels = self.enumerate_labels(processed_test_labels)
 
-        return processed_train_data, processed_train_labels, processed_test_data, processed_test_labels
+        return processed_train_data.iloc[:, :utility.INPUT_DIMENSION], processed_train_labels, processed_test_data.iloc[:, :utility.INPUT_DIMENSION], processed_test_labels
