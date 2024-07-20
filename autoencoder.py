@@ -99,7 +99,7 @@ class AutoEncoder:
 
     def train(self, data, epochs=utility.EPOCHS):
         N = data.shape[0]
-        batch_size = 3
+        batch_size = 6
         losses = []
         #batch gradient decent
         for e in range(epochs):

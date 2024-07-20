@@ -5,3 +5,4 @@ requests
 flask
 matplotlib
 joblib
+PySide6
