@@ -2,13 +2,13 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from autoencoder import AutoEncoder
 from randomforest import RandomForest
-from utility import AE_FILE_PATH
+import  utility
 import ast
 
 app = Flask(__name__)
 
 # Load models
-ae = AutoEncoder(5, 3)
+ae = AutoEncoder(utility.INPUT_DIMENSION, utility.HIDDEN_DIMENSION)
 ae.load_model()
 
 rf = RandomForest()
@@ -21,7 +21,8 @@ def ae_predict():
     data_list = ast.literal_eval(json_data)
     data_point = pd.DataFrame(data_list)
 
-    _, p = ae.encode(data_point.T)
+    ae.encode(data_point.T)
+    p = ae.get_encoded_data()
     return jsonify(p.tolist())
 
 @app.route('/randomforest/predict', methods=['POST'])
