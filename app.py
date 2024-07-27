@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import pandas as pd
-from agent import Agent
 from autoencoder import AutoEncoder
 from randomforest import RandomForest
 from utility import AE_FILE_PATH
