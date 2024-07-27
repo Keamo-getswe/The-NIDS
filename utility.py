@@ -7,7 +7,7 @@ TRAIN_TEST_DATA_PATH = "train_test_data.pkl"
 
 #AE
 TRAIN_INIT_SEED = 616
-EPOCHS = 300
+EPOCHS = 50
 AE_FILE_PATH = "ae_model.pkl"
 
 #TODO: Breaks at 15 going up. Investigate values in calculation that lead to this.
