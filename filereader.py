@@ -7,12 +7,6 @@ class FileReader:
     def __init__(self, path):
         self.__path_to_files = path
 
-    def get_path(self):
-        return self.__path_to_files
-    
-    def set_path(self, new_path):
-        self.__path_to_files = new_path
-
     def read_file(self, file_name):
         extension = ".csv"
 
