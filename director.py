@@ -1,12 +1,14 @@
 import requests
 import pandas as pd
-from agent import Agent
+from PySide6 import QtCore
+import sys
 
 class Director:
     def __init__(self):
         self.__ae_url = 'http://localhost:5000/autoencoder/predict'
         self.__rf_url = 'http://localhost:5000/randomforest/predict'
 
+    @QtCore.Slot()
     def run_pipeline(self, data):
         latent_repr = self.__request_ae_latent_repr(data)
         latent_repr = latent_repr[0]
