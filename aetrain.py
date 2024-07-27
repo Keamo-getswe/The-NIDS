@@ -14,12 +14,12 @@ def train_and_save_model():
     input_size = utility.INPUT_DIMENSION
     hidden_size = utility.HIDDEN_DIMENSION
     ae = AutoEncoder(input_size, hidden_size)
-    agent = Agent("C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\CICIDS2017\\MachineLearningCVE")
-    train_data, train_labels, test_data, test_labels = agent.preprocess()
+    agent = Agent()
+    train_data, train_labels, test_data, test_labels = agent.training_preprocess()
 
     #Because the autoencoder must be trained on benign data exclusively
     ae_train_data = get_benign_data(train_data, train_labels)
-    ae_train_data = ae_train_data.iloc[:8000]
+    ae_train_data = ae_train_data.iloc[:1000]
     ae.train(ae_train_data)
     ae.save_model()
 
