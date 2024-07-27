@@ -116,7 +116,7 @@ class AutoEncoder:
                 self.backward_pass(batch_data)
             print(f'Epoch {e+1}/{epochs}, Loss: {loss}')
             
-        x = np.linspace(-100, 100, len(losses))
+        x = np.linspace(0, 300, len(losses))
         y = np.array(losses)
         plt.plot(x, y)
         plt.show()
