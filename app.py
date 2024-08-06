@@ -4,6 +4,7 @@ from autoencoder import AutoEncoder
 from randomforest import RandomForest
 import  utility
 import ast
+import sys
 
 app = Flask(__name__)
 
@@ -19,8 +20,8 @@ def ae_predict():
     json_data = request.json
     #Format data to handle request
     data_list = ast.literal_eval(json_data)
+    data_list = list(data_list[0].values())
     data_point = pd.DataFrame(data_list)
-
     ae.encode(data_point.T)
     p = ae.get_encoded_data()
     return jsonify(p.tolist())

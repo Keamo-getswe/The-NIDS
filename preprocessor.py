@@ -25,7 +25,16 @@ class Preprocessor:
         data = data.replace([np.inf, -np.inf], np.nan, inplace=False)
         return data
     
-    def normalise_values(self, data):
-        means = data.mean(axis=0)
-        std_devs = data.std(axis=0)
-        return (data - means) / std_devs
+    def normalise_values(self, data, means, std_devs):
+        means = means.to_numpy().reshape(1, -1)
+        std_devs = std_devs.to_numpy().reshape(1, -1)
+        res1 = data - means
+        if res1.isna().values.any():
+            res1 = res1.fillna(0)
+
+        res2 = res1 / std_devs
+        if res2.isna().values.any():
+            res2 = res2.fillna(0)
+        return res2
+
+        

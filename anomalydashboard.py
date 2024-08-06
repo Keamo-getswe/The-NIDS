@@ -8,6 +8,7 @@ from PySide6.QtGui import QFont
 from networkflowreader import NetworkFlowReader
 from agent import Agent
 from director import Director
+import sys
 
 class AnomalyDashboard(QWidget):
     def __init__(self):
@@ -15,6 +16,7 @@ class AnomalyDashboard(QWidget):
         self._agent = Agent()
         self._director = Director()
         self._anom_detection_started = False
+        self.preprocess_started = False
 
         self._init_components()
         self._setup_gui()
@@ -51,8 +53,12 @@ class AnomalyDashboard(QWidget):
 
     @QtCore.Slot()
     def handle_flow_data(self, data):
+        if not self.preprocess_started:
+            self.preprocess_started = True
+            self._agent.prepare_production_preprocess()
+
         data = self._agent.production_preprocess(data)
-        self._director.run_pipeline(data)
+        result = self._director.run_pipeline(data)
     
     def _init_components(self):
         self._start_button = QPushButton("Start")

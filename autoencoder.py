@@ -99,7 +99,7 @@ class AutoEncoder:
 
     def train(self, data, epochs=utility.EPOCHS):
         N = data.shape[0]
-        batch_size = 6
+        batch_size = 500
         losses = []
         #batch gradient decent
         for e in range(epochs):
@@ -116,7 +116,7 @@ class AutoEncoder:
                 self.backward_pass(batch_data)
             print(f'Epoch {e+1}/{epochs}, Loss: {loss}')
             
-        x = np.linspace(0, 300, len(losses))
+        x = np.linspace(0, len(losses), len(losses))
         y = np.array(losses)
         plt.plot(x, y)
         plt.show()

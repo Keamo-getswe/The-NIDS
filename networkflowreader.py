@@ -9,7 +9,6 @@ class NetworkFlowReader(QObject):
 
     def __init__(self):
         super().__init__()
-        self.i = 1
 
     @QtCore.Slot()
     def start_data_flow(self):
