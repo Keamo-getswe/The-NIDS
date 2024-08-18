@@ -2,14 +2,13 @@ import numpy as np
 import utility
 import joblib
 import os
-import matplotlib.pyplot as plt
 
 np.seterr(over='raise', under='raise')
 
 class AutoEncoder:
     def __init__(self, in_dimension, h1_dimension, learn_rate=0.01):
         self.__learning_rate = learn_rate
-        #np.random.seed(utility.TRAIN_INIT_SEED)
+        np.random.seed(utility.TRAIN_INIT_SEED)
         self.__encoder_w1 = self.xavier_init((in_dimension, h1_dimension))
         self.__encoder_b1 = np.random.randn(1, h1_dimension)
         self.__encoder_w2 = self.xavier_init((h1_dimension, utility.BOTTLENECK_DIMENSION))
@@ -97,29 +96,38 @@ class AutoEncoder:
         self.__decoder_w2 -= self.__learning_rate * d_w2_prime
         self.__decoder_b2 -= self.__learning_rate * d_bias2_prime.to_numpy()
 
-    def train(self, data, epochs=utility.EPOCHS):
+    def train(self, data, v_data, epochs=utility.EPOCHS):
         N = data.shape[0]
-        batch_size = 500
-        losses = []
+        batch_size = 50
+        best_val_loss = float('inf')
+        self.train_losses = []
+        self.val_losses = []
+        
         #batch gradient decent
         for e in range(epochs):
             # Shuffle data
             indices = np.arange(N)
             np.random.shuffle(indices)
             data = data.iloc[indices]
-        
+            loss = 0
+
             for i in range(0, N, batch_size):
                 batch_data = data[i:i + batch_size]
                 self.forward_pass(batch_data)
-                loss = self.calculate_loss(batch_data, self.decoded_data)
-                losses += [loss]
+                loss += self.calculate_loss(batch_data, self.decoded_data)
                 self.backward_pass(batch_data)
-            print(f'Epoch {e+1}/{epochs}, Loss: {loss}')
             
-        x = np.linspace(0, len(losses), len(losses))
-        y = np.array(losses)
-        plt.plot(x, y)
-        plt.show()
+            loss =  loss / (N // batch_size)
+            self.train_losses += [loss]
+            self.forward_pass(v_data)
+            val_loss = self.calculate_loss(v_data, self.decoded_data)
+            self.val_losses += [val_loss]
+
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                self.save_model()
+
+            print(f'Epoch {e+1}/{epochs}, Loss: {loss}')
 
     def predict(self, data):
         _, _, _, decoded_data = self.forward_pass(data)
@@ -128,9 +136,13 @@ class AutoEncoder:
     def save_model(self):
         model_params = {
             'E_W1': self.__encoder_w1,
+            'E_w2': self.__encoder_w2,
             'D_W1': self.__decoder_w1,
+            'D_W2': self.__decoder_w2,
             'E_b1': self.__encoder_b1,
-            'D_b1': self.__decoder_b1
+            'E_b2': self.__encoder_b2,
+            'D_b1': self.__decoder_b1,
+            'D_b2': self.__decoder_b2
         }
 
         file_path = utility.AE_FILE_PATH
@@ -140,6 +152,10 @@ class AutoEncoder:
         file_path = utility.AE_FILE_PATH
         model_params = joblib.load(file_path)
         self.__encoder_w1 = model_params['E_W1']
-        self.__decoder_w1 = model_params['D_W1']
         self.__encoder_b1 = model_params['E_b1']
+        self.__encoder_w2 = model_params['E_W2']
+        self.__encoder_b1 = model_params['E_b2']
+        self.__decoder_w1 = model_params['D_W1']
         self.__decoder_b1 = model_params['D_b1']
+        self.__decoder_w1 = model_params['D_W2']
+        self.__decoder_b1 = model_params['D_b2']
