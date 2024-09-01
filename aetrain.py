@@ -35,16 +35,18 @@ def train_model(ae, train_data, train_labels, valid_data, valid_labels):
     #Because the autoencoder must be trained on benign data exclusively
     ae_train_data = get_benign_data(train_data, train_labels)
     ae_valid_data = get_benign_data(valid_data, valid_labels)
-    ae_train_data = ae_train_data.iloc[:1000]
+    # ae_train_data = ae_train_data.iloc[:1000]
+    # print(ae_train_data.describe())
+    # print(ae_valid_data.describe())
     ae.train(ae_train_data, ae_valid_data)
 
 if __name__ == "__main__":
     input_size = utility.INPUT_DIMENSION
-    hidden_size = utility.HIDDEN_DIMENSION
-    ae = AutoEncoder(input_size, hidden_size)
+    hidden_sizes = [utility.HIDDEN_DIMENSION, utility.BOTTLENECK_DIMENSION]
+    ae = AutoEncoder(input_size, hidden_sizes)
     agent = Agent()
     train_data, train_labels, test_data, test_labels = agent.training_preprocess()
-    
+
     #Save for rf model training
     data = {
         "train_data": train_data,
@@ -66,7 +68,7 @@ if __name__ == "__main__":
         X_train, X_test = train_data.iloc[train_indices], train_data.iloc[test_indices]
         y_train, y_test = train_labels.iloc[train_indices], train_labels.iloc[test_indices]
         train_model(ae, X_train, y_train, X_test, y_test)
-    
+        
         #Plot
         plt.subplot(3, 2, i)
         val_losses += [ae.val_losses]
@@ -78,8 +80,7 @@ if __name__ == "__main__":
         plt.title(f'Fold {i}')
         plt.legend()
         i += 1
-
-   
+    
     val_losses = np.array(val_losses)
     train_losses = np.array(train_losses)
     avg_val_loss = np.mean(val_losses, axis=0)
@@ -95,7 +96,3 @@ if __name__ == "__main__":
     plt.title('Overall Training and Validation Error over Epochs')
     plt.legend()
     plt.show()
-
-
-
-
