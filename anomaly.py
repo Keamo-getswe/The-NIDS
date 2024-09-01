@@ -8,6 +8,7 @@ class Anomaly:
         self.destination_ip = ""
         self.source_port = ""
         self.destination_port = ""
+        self.action = "Alert"
     
     def get_source_ip(self):
         return self.source_ip
@@ -41,4 +42,5 @@ class Anomaly:
     
     def get_action(self):
         return self.action
+    
     
