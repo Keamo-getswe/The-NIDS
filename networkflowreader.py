@@ -13,7 +13,7 @@ class NetworkFlowReader(QObject):
     @QtCore.Slot()
     def start_data_flow(self):
         self.socket = QTcpSocket()
-        self.socket.connectToHost('127.0.0.1', 333)
+        self.socket.connectToHost('192.168.0.157', 1700)
         if not self.socket.waitForConnected(5000):
             print("Connection failed")
             return
