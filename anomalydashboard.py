@@ -1,13 +1,14 @@
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtWidgets import (QWidget, QPushButton, QComboBox,
-                               QTableWidget,QTableWidgetItem, QHeaderView, 
-                               QGroupBox,QHBoxLayout, QVBoxLayout, 
-                               QGridLayout,QLabel)
-from PySide6.QtCore import QDateTime, Qt, QThread, QObject
-from PySide6.QtGui import QFont
+                               QHeaderView, QGroupBox, QHBoxLayout, 
+                               QVBoxLayout, QGridLayout,QLabel,
+                               QTableView)
+from PySide6.QtCore import QDateTime, Qt, QThread
 from networkflowreader import NetworkFlowReader
 from agent import Agent
 from director import Director
+from anomalymodel import AnomalyModel
+from anomalylist import AnomalyList
 import sys
 
 class AnomalyDashboard(QWidget):
@@ -52,6 +53,10 @@ class AnomalyDashboard(QWidget):
         pass
 
     @QtCore.Slot()
+    def addAnomaly(self, timestamp):
+        pass
+        
+    @QtCore.Slot()
     def handle_flow_data(self, data):
         if not self.preprocess_started:
             self.preprocess_started = True
@@ -59,13 +64,15 @@ class AnomalyDashboard(QWidget):
 
         data = self._agent.production_preprocess(data)
         result = self._director.run_pipeline(data)
+        if result[0] == 1:
+            self.addAnomaly()
     
     def _init_components(self):
         self._start_button = QPushButton("Start")
         self._stop_button = QPushButton("Stop")
         self._duration_filters = QComboBox()
         self._filter_button = QPushButton("Filter")
-        self._anomaly_table = QTableWidget(1, 7)
+        self._anomaly_table = QTableView()
 
         self._main_layout = QGridLayout()
         self._button_layout = QHBoxLayout()
@@ -81,21 +88,9 @@ class AnomalyDashboard(QWidget):
         self._duration_filters.addItem("Last Hour")
         self._duration_filters.addItem("Last Day")
         self._duration_filters.addItem("Last Month")
-
-        self._anomaly_table.setHorizontalHeaderLabels(["ID", "Timestamp", "SrcIP", "SrcPort", "DestIP", "DestPort", "Action"])
         
-        for j in range(self._anomaly_table.columnCount()):
-            if j == 0:    
-                self._anomaly_table.setItem(0, j, QTableWidgetItem(f"{j}"))
-            elif j == 1:
-                self._anomaly_table.setItem(0, j, QTableWidgetItem(QDateTime.currentDateTime().toString()))
-            elif j ==  2 or j == 4:
-                self._anomaly_table.setItem(0, j, QTableWidgetItem("000.000.000"))
-            elif j == 3 or j == 5:
-                self._anomaly_table.setItem(0, j, QTableWidgetItem(f"{80+j}"))
-            else:
-                self._anomaly_table.setItem(0, j, QTableWidgetItem("Alert"))
-            
+        anomaly_model = AnomalyModel()
+        self._anomaly_table.setModel(anomaly_model)
 
     def _setup_gui(self):
         button_width = 75
