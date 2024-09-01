@@ -16,9 +16,11 @@ class AnomalyListMeta(type):
 class AnomalyList(metaclass=AnomalyListMeta):
     def __init__(self):
         self.anomalies = {}
+        self.count = len(self.anomalies)
 
     def add_anomaly(self, anomaly):
-        self.anomalies[anomaly.get_timestamp().toString("yyyy-MM-dd HH:mm:ss")] = anomaly
+        self.anomalies[f"{self.count}"] = anomaly
+        self.count += 1
 
     def get_anomaly(self, id):
         if len(self.anomalies) > 0:
