@@ -53,7 +53,6 @@ class Agent():
     
     def prepare_production_preprocess(self):
         self.means, self.std_devs = self.load_normalization_data()
-
     
     def production_preprocess(self, data):
         data = [float(x) for x in data.split(",")[:-1]]
