@@ -3,7 +3,7 @@ from agent import Agent
 import numpy as np
 import joblib
 import utility
-import os
+import sys
 import matplotlib.pyplot as plt
 
 def get_benign_data(train_data, train_labels):
@@ -35,17 +35,14 @@ def train_model(ae, train_data, train_labels, valid_data, valid_labels):
     #Because the autoencoder must be trained on benign data exclusively
     ae_train_data = get_benign_data(train_data, train_labels)
     ae_valid_data = get_benign_data(valid_data, valid_labels)
-    # ae_train_data = ae_train_data.iloc[:1000]
-    # print(ae_train_data.describe())
-    # print(ae_valid_data.describe())
     ae.train(ae_train_data, ae_valid_data)
 
 if __name__ == "__main__":
     input_size = utility.INPUT_DIMENSION
     hidden_sizes = [utility.HIDDEN_DIMENSION, utility.BOTTLENECK_DIMENSION]
-    ae = AutoEncoder(input_size, hidden_sizes)
+    ae = AutoEncoder(input_size, hidden_sizes, 0.0001)
     agent = Agent()
-    train_data, train_labels, test_data, test_labels = agent.training_preprocess()
+    train_data, train_labels, test_data, test_labels = agent.pipelinea_training_preprocess()
 
     #Save for rf model training
     data = {
@@ -64,11 +61,11 @@ if __name__ == "__main__":
     plt.figure(figsize=(15, 10))
     i = 1
     folds = k_fold_split(train_data, k)
-    for train_indices, test_indices in folds:
-        X_train, X_test = train_data.iloc[train_indices], train_data.iloc[test_indices]
-        y_train, y_test = train_labels.iloc[train_indices], train_labels.iloc[test_indices]
-        train_model(ae, X_train, y_train, X_test, y_test)
-        
+    x = -1
+    for train_indices, validation_indices in folds:
+        X_train, X_valid = train_data.iloc[train_indices], train_data.iloc[validation_indices]
+        y_train, y_valid = train_labels.iloc[train_indices], train_labels.iloc[validation_indices]
+        train_model(ae, X_train, y_train, X_valid, y_valid)
         #Plot
         plt.subplot(3, 2, i)
         val_losses += [ae.val_losses]
@@ -80,12 +77,12 @@ if __name__ == "__main__":
         plt.title(f'Fold {i}')
         plt.legend()
         i += 1
-    
+
     val_losses = np.array(val_losses)
     train_losses = np.array(train_losses)
     avg_val_loss = np.mean(val_losses, axis=0)
     avg_train_loss = np.mean(train_losses, axis=0)
-    # epochs = range(1, epochs + 1)
+
     plt.tight_layout()
     plt.subplots_adjust(top=0.9)
     plt.subplot(3, 2, i)
