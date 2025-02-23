@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._anomaly_dash.new_model_data.connect(self._stats_dash._manager_worker._stats_manager.add_new_data)
         self._cards[1].clicked.connect(self.show_statistics_dashboard)
         self._cards[2].clicked.connect(self.show_log_dashboard)
+        self.setWindowTitle("The NIDS")
 
     def set_central(self, widget):
         if self._current_central_widget != None:
@@ -47,7 +48,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_central(self._stats_dash)
 
     def _init_components(self):
-        icon_path = "C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\images\\"
+        # Redacted
+        icon_path = "images\\"
         self._cards = []
         icon_names = [
             "anonymous-user-icon.png",

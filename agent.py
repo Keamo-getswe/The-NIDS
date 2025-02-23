@@ -29,12 +29,13 @@ class Agent(QObject):
             self.pca = PCA(n_components=12)
         else:
             self.pca = joblib.load(utility.PCA_FILE_PATH)
-
-    def set_data_from_files(self, path="C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\CICIDS2017\\MachineLearningCVE"):
+    # Redacted path
+    def set_data_from_files(self, path="CICIDS2017\\MachineLearningCVE"):
         file_reader = FileReader(path)
         return file_reader.read_training_files()
 
-    def set_temporal_data_from_files(self, path="C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\CICIDS2017\\MachineLearningCVE"):
+    # Redacted path
+    def set_temporal_data_from_files(self, path="CICIDS2017\\MachineLearningCVE"):
         reader = LstmFileReader(path)
         train_data = reader.read_training_files()
         test_data = reader.read_test_file()

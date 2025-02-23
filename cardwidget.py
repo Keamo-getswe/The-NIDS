@@ -23,7 +23,8 @@ class CardWidget(QtWidgets.QPushButton):
         
 
     def _set_gui(self):
-        icon_path = "C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\images\\" + self._icon_name
+        # Redacted
+        icon_path = "images\\" + self._icon_name
         self._icon_label.setPixmap(QPixmap(icon_path))
 
         font = self._title_label.font()

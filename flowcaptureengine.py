@@ -12,7 +12,8 @@ class FlowCaptureEngine(QTcpServer):
     def __init__(self):
         super().__init__()
         self.client_socket = None
-        self.reader = FileReader("C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\CSE-CIC-IDS2018")
+        # Redacted path
+        self.reader = FileReader()
         self.data = self.reader.read_file("CSE-CIC-IDS2018.csv")
         self.count = 0
     

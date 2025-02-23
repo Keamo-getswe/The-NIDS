@@ -3,7 +3,8 @@ from PySide6.QtCore import QMutex
 
 class LogReader:
     def __init__(self):
-        self.file_path = "C:\\Users\\morob\\Documents\\Work\\Honours Project\\The-NIDS\\app.log"
+        # Redacted path
+        self.file_path = "app.log"
         self.mutex = QMutex()
 
     def read(self):
