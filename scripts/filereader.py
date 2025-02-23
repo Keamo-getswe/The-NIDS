@@ -1,10 +1,11 @@
 import os
 import pandas as pd
+import utility
 from logconfig import logger
 from pandas.errors import ParserError, EmptyDataError
 
 class FileReader:
-    def __init__(self, path="CSE-CIC-IDS2018"):
+    def __init__(self, path=utility.P2_TRAINING_DATASET_PATH):
         self.__path_to_files = path
 
     def read_training_file(self, file_name):

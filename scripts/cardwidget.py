@@ -2,6 +2,7 @@ from PySide6 import QtWidgets, QtGui, QtCore
 from PySide6.QtWidgets import (QLabel, QPushButton, QVBoxLayout)
 from PySide6.QtGui import (QPixmap, QIcon, QFont)
 from PySide6.QtCore import Qt
+import utility
 
 class CardWidget(QtWidgets.QPushButton):
     def __init__(self, icon_name, card_title):
@@ -24,7 +25,7 @@ class CardWidget(QtWidgets.QPushButton):
 
     def _set_gui(self):
         # Redacted
-        icon_path = "images\\" + self._icon_name
+        icon_path = utility.ICON_PATH + self._icon_name
         self._icon_label.setPixmap(QPixmap(icon_path))
 
         font = self._title_label.font()

@@ -8,6 +8,7 @@ from anomalydashboard import AnomalyDashboard
 from logdashboard import LogDashboard
 from statisticsdashboard import StatisticsDashboard
 import sys
+import utility
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -48,8 +49,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.set_central(self._stats_dash)
 
     def _init_components(self):
-        # Redacted
-        icon_path = "images\\"
         self._cards = []
         icon_names = [
             "anonymous-user-icon.png",
@@ -84,13 +83,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tool_bar = QToolBar("Shortcuts")
         self.addToolBar(self._tool_bar)
 
-        self._home_action = QAction(QIcon(icon_path+"home-icon.png"), "Menu Action", self)
+        self._home_action = QAction(QIcon(utility.ICON_PATH+"home-icon.png"), "Menu Action", self)
         self._tool_bar.addAction(self._home_action)
-        self._anomaly_action = QAction(QIcon(icon_path+"anomaly-icon.png"), "Anomaly Action", self)
+        self._anomaly_action = QAction(QIcon(utility.ICON_PATH+"anomaly-icon.png"), "Anomaly Action", self)
         self._tool_bar.addAction(self._anomaly_action)
-        self._stats_action = QAction(QIcon(icon_path+"stats-icon.png"), "Statistics Action", self)
+        self._stats_action = QAction(QIcon(utility.ICON_PATH+"stats-icon.png"), "Statistics Action", self)
         self._tool_bar.addAction(self._stats_action)
-        self._log_action = QAction(QIcon(icon_path+"log-icon.png"), "Log Action", self)
+        self._log_action = QAction(QIcon(utility.ICON_PATH+"log-icon.png"), "Log Action", self)
         self._tool_bar.addAction(self._log_action)
         
         self._show_log_dash.triggered.connect(self.show_log_dashboard)

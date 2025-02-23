@@ -30,12 +30,12 @@ class Agent(QObject):
         else:
             self.pca = joblib.load(utility.PCA_FILE_PATH)
     # Redacted path
-    def set_data_from_files(self, path="CICIDS2017\\MachineLearningCVE"):
+    def set_data_from_files(self, path=utility.P1_TRAINING_DATASET_PATH):
         file_reader = FileReader(path)
         return file_reader.read_training_files()
 
     # Redacted path
-    def set_temporal_data_from_files(self, path="CICIDS2017\\MachineLearningCVE"):
+    def set_temporal_data_from_files(self, path=utility.P2_TRAINING_DATASET_PATH):
         reader = LstmFileReader(path)
         train_data = reader.read_training_files()
         test_data = reader.read_test_file()

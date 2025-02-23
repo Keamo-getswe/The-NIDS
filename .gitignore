@@ -1,7 +1,5 @@
 __pycache__/*
-CICIDS2017/*
 *.pkl
-CSE-CIC-IDS2018
-*.keras
 *.log
-gui-playground/
+*.keras
+*.csv
