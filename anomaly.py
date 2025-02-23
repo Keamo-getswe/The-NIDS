@@ -1,14 +1,22 @@
 from PySide6 import QtCore
 from PySide6.QtCore import QDateTime
+import utility
 
 class Anomaly:
-    def __init__(self, ):
+    def __init__(self):
+        self.id = None
         self.timestamp = None
-        self.source_ip = ""
-        self.destination_ip = ""
-        self.source_port = ""
-        self.destination_port = ""
+        self.source_ip = utility.SOURCE_IP
+        self.destination_ip = utility.DESTINATION_IP
+        self.source_port = utility.PORT
+        self.destination_port = utility.PORT
         self.action = "Alert"
+
+    def get_id(self):
+        return self.id
+
+    def set_id(self, id):
+        self.id = id
     
     def get_source_ip(self):
         return self.source_ip
@@ -37,7 +45,6 @@ class Anomaly:
         return self.timestamp
     
     def set_timestamp(self):
-        if not (self.timestamp == None):
             self.timestamp = QDateTime.currentDateTime()
     
     def get_action(self):

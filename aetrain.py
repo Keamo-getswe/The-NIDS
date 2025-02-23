@@ -11,24 +11,23 @@ def get_benign_data(train_data, train_labels):
     selected_rows = train_data.iloc[indices]
     return selected_rows
 
-def k_fold_split(data, k):
+def k_fold_split(data, labels, k):
+    # Calculate fold size that is evenly divisible
     data_row_count = data.shape[0]
-    indices = np.arange(data_row_count)
-    np.random.shuffle(indices)
-    fold_sizes = np.full(k, data_row_count // k, dtype=int)
+    fold_size = data_row_count // k  # Drop any remainder for even folds
+    usable_count = fold_size * k     # Total samples that fit into k equal folds
+    
+    # Separate indices by class for stratification
+    unique_classes, class_indices = np.unique(labels, return_inverse=True)
+    class_folds = {cls: np.array_split(np.where(class_indices == cls)[0][:usable_count], k) for cls in unique_classes}
 
-    #Distribute remaining data amongst each of the folds 
-    fold_sizes[:data_row_count % k] += 1
-
-    #Current position
-    i = 0
+    # Initialize folds list
     folds = []
-    for fold_size in fold_sizes:
-        start, stop = i, i + fold_size
-        test_indices = indices[start:stop]
-        train_indices = np.concatenate([indices[:start], indices[stop:]])
+    for fold_index in range(k):
+        test_indices = np.concatenate([class_folds[cls][fold_index] for cls in unique_classes])
+        train_indices = np.concatenate([np.hstack(class_folds[cls][:fold_index] + class_folds[cls][fold_index + 1:]) for cls in unique_classes])
         folds.append((train_indices, test_indices))
-        i = stop
+    
     return folds
 
 def train_model(ae, train_data, train_labels, valid_data, valid_labels):
@@ -40,7 +39,7 @@ def train_model(ae, train_data, train_labels, valid_data, valid_labels):
 if __name__ == "__main__":
     input_size = utility.INPUT_DIMENSION
     hidden_sizes = [utility.HIDDEN_DIMENSION, utility.BOTTLENECK_DIMENSION]
-    ae = AutoEncoder(input_size, hidden_sizes, 0.0001)
+    ae = AutoEncoder(input_size, hidden_sizes)
     agent = Agent()
     train_data, train_labels, test_data, test_labels = agent.pipelinea_training_preprocess()
 
@@ -51,7 +50,7 @@ if __name__ == "__main__":
         "test_data": test_data,
         "test_labels": test_labels
     }
-    joblib.dump(data, utility.TRAIN_TEST_DATA_PATH)
+    joblib.dump(data, utility.P1_TRAIN_TEST_DATA_PATH)
 
     #K fold cross validation
     k = 5
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     train_losses = []
     plt.figure(figsize=(15, 10))
     i = 1
-    folds = k_fold_split(train_data, k)
+    folds = k_fold_split(train_data, train_labels, k)
     x = -1
     for train_indices, validation_indices in folds:
         X_train, X_valid = train_data.iloc[train_indices], train_data.iloc[validation_indices]

@@ -7,8 +7,8 @@ class CardWidget(QtWidgets.QPushButton):
     def __init__(self, icon_name, card_title):
         super().__init__()
 
-        self._WIDTH = 350
-        self._HEIGHT = 250
+        self._WIDTH = 400
+        self._HEIGHT = 300
 
         self._icon_name = icon_name
         self._card_title = card_title

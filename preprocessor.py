@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import utility
+from logconfig import logger
 import os
 
 class Preprocessor:
@@ -12,17 +12,17 @@ class Preprocessor:
         split_labels = data.iloc[:, -1]
         return split_data, split_labels
     
+    def extract_dos_data(self, data):
+        to_include = {'BENIGN', 'DoS Hulk', 'DoS slowloris', 'DoS GoldenEye', 'DoS Slowhttptest'}
+        filtered_data = data[data['Label'].isin(to_include)]
+        return filtered_data
+    
     def enumerate_labels(self, labels):
         return labels.apply(lambda x: 0 if x == 'BENIGN' else 1)
 
-    def extract_features(self, data):
-        features = [' Destination Port', ' Flow Duration', ' Total Fwd Packets', ' Total Backward Packets', 'Flow Bytes/s', ' Label']
-        data = data[features]
-        return data
-
     def handle_null_values(self, data):
-        data = data.dropna(inplace=False)
         data = data.replace([np.inf, -np.inf], np.nan, inplace=False)
+        data = data.dropna(inplace=False)
         return data
     
     def normalise_values(self, data, means, std_devs):
