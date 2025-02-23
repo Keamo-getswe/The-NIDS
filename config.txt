@@ -1,0 +1,5 @@
+# IP address of flow capture machine
+source_ip=
+source_prt=17000
+# IP address of NIDS machine
+destination_ip=
